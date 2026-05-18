@@ -22,18 +22,10 @@ def _open_in_os(path: str, *, select_file: bool = False) -> None:
     """OS 기본 파일 매니저로 path 열기. Windows / macOS / Linux."""
     try:
         if sys.platform.startswith("win"):
-            import ctypes
             if select_file:
-                proc = subprocess.Popen(["explorer", "/select,", path])
+                subprocess.Popen(["explorer", "/select,", path])
             else:
-                proc = subprocess.Popen(["explorer", path])
-            # explorer가 뜰 때까지 잠깐 기다린 뒤 포커스 강제 전환
-            import time
-            time.sleep(0.3)
-            ctypes.windll.user32.SetForegroundWindow(
-                ctypes.windll.user32.FindWindowW("CabinetWClass", None)
-                or ctypes.windll.user32.FindWindowW("ExploreWClass", None)
-            )
+                subprocess.Popen(["explorer", path])
         elif sys.platform == "darwin":
             subprocess.Popen(["open", "-R", path] if select_file else ["open", path])
         else:
