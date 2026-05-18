@@ -1,5 +1,9 @@
 # 수원대 LMS Sync
 
+[![Download](https://img.shields.io/badge/다운로드-v1.0.0-blue?style=for-the-badge&logo=github)](https://github.com/taskcomminution12/2026_hackathon_result/releases/tag/v1.0.0)
+
+> 📦 **[최신 배포 파일 다운로드 (v1.0.0)](https://github.com/taskcomminution12/2026_hackathon_result/releases/tag/v1.0.0)**
+
 수원대학교 LMS(Canvas + LearningX + Xinics)에서 학습 자료를 자동으로 다운로드하고
 대시보드에서 보여주며, 과제 마감을 카카오톡으로 알려주는 데스크톱 도구
 
