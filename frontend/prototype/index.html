@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>수원대 LMS Sync — 대시보드</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar 공통 — shared.js가 채움 -->
+    <aside class="sidebar" data-active="dashboard"></aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__title">
+          <h1 class="topbar__h1">대시보드</h1>
+          <p class="topbar__sub" data-bind="today"></p>
+        </div>
+        <div class="topbar__right">
+          <button class="btn btn--ghost" data-action="open-folder">
+            <i data-lucide="folder-open"></i><span>다운로드 폴더</span>
+          </button>
+          <button class="btn btn--primary" data-action="sync">
+            <i data-lucide="refresh-cw"></i><span>지금 동기화</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- KPI 3장 (필기본 KPI 제거) -->
+      <section class="kpis kpis--3">
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--blue"><i data-lucide="book-open-text"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__label">수강 과목</div>
+            <div class="kpi__value" data-bind="kpi.subjects">—</div>
+            <div class="kpi__delta" data-bind="kpi.subjects_sub"></div>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--teal"><i data-lucide="files"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__label">저장된 자료</div>
+            <div class="kpi__value" data-bind="kpi.files">—</div>
+            <div class="kpi__delta" data-bind="kpi.files_sub"></div>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--orange"><i data-lucide="alarm-clock"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__label">임박 과제</div>
+            <div class="kpi__value" data-bind="kpi.assignments">—</div>
+            <div class="kpi__delta" data-bind="kpi.assignments_sub"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts -->
+      <section class="grid grid--2-1">
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <div class="card__title">주차별 자료</div>
+              <div class="card__sub">과목별 누적</div>
+            </div>
+          </div>
+          <div class="card__body" style="min-height:280px;position:relative">
+            <canvas id="chartWeekly"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <div class="card__title">과제 마감 분포</div>
+              <div class="card__sub">앞으로 14일</div>
+            </div>
+          </div>
+          <div class="card__body card__body--center" style="min-height:280px;position:relative">
+            <canvas id="chartDeadline"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- 임박 과제 + 활동 피드 -->
+      <section class="grid grid--2-1">
+        <div class="card">
+          <div class="card__head">
+            <div class="card__title">임박 과제</div>
+            <span class="card__hint" data-bind="assignments.empty" hidden></span>
+          </div>
+          <div class="card__body p0">
+            <table class="table">
+              <thead>
+                <tr><th>과목</th><th>과제</th><th>마감</th><th>남은 시간</th><th>상태</th></tr>
+              </thead>
+              <tbody data-bind="assignments.rows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__head">
+            <div class="card__title">최근 활동</div>
+            <button class="link-btn" data-action="refresh-feed">
+              <i data-lucide="rotate-cw"></i> 새로고침
+            </button>
+          </div>
+          <div class="card__body p0">
+            <ul class="feed" data-bind="feed.rows"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 공지 -->
+      <section class="card">
+        <div class="card__head">
+          <div>
+            <div class="card__title">최근 공지</div>
+            <div class="card__sub">과목별 첨부 파일은 자동으로 다운로드됨</div>
+          </div>
+        </div>
+        <div class="card__body p0">
+          <ul class="feed feed--compact" data-bind="announcements.rows"></ul>
+        </div>
+      </section>
+
+      <!-- 캘린더 -->
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">일정</div>
+          <span class="card__hint">과제 마감 자동 표시</span>
+        </div>
+        <div class="card__body"><div id="calendar"></div></div>
+      </section>
+
+      <footer class="foot">
+        <span class="mono">v0.1.0</span>
+        <span class="dot-sep"></span>
+        <span data-bind="footer.user"></span>
+        <span class="dot-sep"></span>
+        <span data-bind="sync.last">동기화 이력 없음</span>
+      </footer>
+    </main>
+
+    <!-- Toast (동기화 결과만 띄움 — 기본 숨김) -->
+    <div class="toast" hidden>
+      <span class="toast__icon"><i data-lucide="check"></i></span>
+      <div class="toast__body">
+        <div class="toast__title"></div>
+        <div class="toast__sub"></div>
+      </div>
+      <button class="toast__close" data-action="toast-close" aria-label="닫기">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+  </div>
+
+  <script src="/static/shared.js"></script>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>

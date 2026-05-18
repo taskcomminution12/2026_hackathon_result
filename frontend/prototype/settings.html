@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>수원대 LMS Sync — 설정</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" data-active="settings"></aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__title">
+          <h1 class="topbar__h1">설정</h1>
+          <p class="topbar__sub">Canvas 연결, 다운로드 폴더, 카카오톡 알림</p>
+        </div>
+      </header>
+
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">Canvas 연결</div>
+        </div>
+        <div class="card__body">
+          <div class="form-row">
+            <label class="form-label">Base URL</label>
+            <div class="form-value">
+              <code class="form-static" data-bind="settings.base_url">—</code>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">로그인</label>
+            <div class="form-value" data-bind="settings.user">—</div>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="canvasTokenInput">토큰</label>
+            <div class="form-value form-row--inline" style="gap:8px">
+              <span data-bind="settings.token_state" class="badge badge--soft">—</span>
+              <input type="password" class="input" id="canvasTokenInput"
+                     placeholder="토큰 입력"
+                     style="min-width:300px" />
+              <button class="iconbtn" data-action="toggle-token-visibility" title="보기/숨기기">
+                <i data-lucide="eye"></i>
+              </button>
+              <button class="btn btn--primary" data-action="save-token">
+                <i data-lucide="check"></i><span>저장</span>
+              </button>
+            </div>
+            <p class="form-hint">
+              발급: <code class="mono">https://lms.suwon.ac.kr</code> → 계정 → 설정 → 승인된 통합 → + 새 액세스 토큰.
+              저장 즉시 반영, 다음 sync 부터 새 토큰 사용.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__head">
+          <div>
+            <div class="card__title">다운로드 폴더</div>
+            <div class="card__sub">OneDrive 동기화 폴더로 지정하면 iPad와 자동 공유</div>
+          </div>
+        </div>
+        <div class="card__body">
+          <div class="form-row form-row--inline">
+            <input type="text" class="input" id="downloadRoot" placeholder="예: C:/Users/User/OneDrive/수업자료" />
+            <button class="btn btn--primary" data-action="save-folder">
+              <i data-lucide="check"></i><span>저장</span>
+            </button>
+          </div>
+          <p class="form-hint" style="margin-top: 10px">
+            저장 시 폴더가 없으면 자동 생성합니다. 변경 후 다음 동기화부터 새 폴더를 사용합니다.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__head">
+          <div>
+            <div class="card__title">카카오톡 알림</div>
+            <div class="card__sub">과제 마감 N일 전 자동으로 본인에게 메모 전송</div>
+          </div>
+          <span class="badge" data-bind="kakao.badge">—</span>
+        </div>
+        <div class="card__body">
+          <div class="form-row" data-bind="kakao.row">
+            <label class="form-label">상태</label>
+            <div class="form-value" data-bind="kakao.state">확인 중…</div>
+          </div>
+          <div class="kakao-actions" data-bind="kakao.actions">
+            <a class="btn btn--primary" href="/api/kakao/login" data-bind="kakao.btn-connect">
+              <i data-lucide="message-circle"></i><span>카카오톡 연결</span>
+            </a>
+            <button class="btn btn--ghost" data-action="kakao-test" hidden>
+              <i data-lucide="send"></i><span>테스트 알림 보내기</span>
+            </button>
+            <button class="btn btn--ghost" data-action="kakao-notify-now" hidden>
+              <i data-lucide="bell-ring"></i><span>지금 임박 과제 알림</span>
+            </button>
+            <button class="btn btn--ghost" data-action="kakao-disconnect" hidden>
+              <i data-lucide="unlink"></i><span>연결 해제</span>
+            </button>
+          </div>
+          <p class="form-hint" style="margin-top:14px">
+            본인 카카오 계정의 "나에게 보내기"로 발송됩니다. 다른 사람에겐 전송되지 않아요.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__head">
+          <div>
+            <div class="card__title">자동 동기화</div>
+            <div class="card__sub">백그라운드에서 일정 주기로 자동 sync</div>
+          </div>
+        </div>
+        <div class="card__body">
+          <div class="form-row form-row--inline">
+            <label class="form-label">주기</label>
+            <select class="input" id="syncInterval" style="max-width:220px">
+              <option value="0">실시간 (sync 종료 직후 재시작)</option>
+              <option value="5">5분마다</option>
+              <option value="10">10분마다</option>
+              <option value="15">15분마다</option>
+              <option value="30" selected>30분마다</option>
+            </select>
+            <button class="btn btn--primary" data-action="save-interval">
+              <i data-lucide="check"></i><span>저장</span>
+            </button>
+          </div>
+          <p class="form-hint">다음 자동 동기화: <span data-bind="scheduler.next">—</span></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">동기화 이력</div>
+        </div>
+        <div class="card__body p0">
+          <table class="table">
+            <thead><tr><th>시작</th><th>완료</th><th>새로 받음</th><th>스킵</th><th>실패</th><th>상태</th></tr></thead>
+            <tbody data-bind="sync.history">
+              <tr><td colspan="6" class="empty-row">기록이 없습니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" hidden>
+      <span class="toast__icon"><i data-lucide="check"></i></span>
+      <div class="toast__body">
+        <div class="toast__title"></div>
+        <div class="toast__sub"></div>
+      </div>
+      <button class="toast__close" data-action="toast-close" aria-label="닫기">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+  </div>
+
+  <script src="/static/shared.js"></script>
+  <script src="/static/settings.js"></script>
+</body>
+</html>

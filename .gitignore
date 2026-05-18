@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 가상환경 (PC 별로 새로 만들어야 함)
+.venv/
+venv/
+
+# 환경 변수 (개인 키 포함)
+.env
+*.env.local
+
+# 데이터베이스 (개인 토큰·동기화 이력 포함)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# 다운로드된 학습 자료 (개인 자료)
+downloads/
+
+# PyInstaller 빌드 산출물
+build/
+dist/
+*.spec.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# 임시
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

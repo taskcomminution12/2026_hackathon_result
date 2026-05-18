@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>수원대 LMS Sync — 과목</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" data-active=""></aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__title">
+          <a class="back-link" href="/dashboard">
+            <i data-lucide="chevron-left"></i> 대시보드
+          </a>
+          <h1 class="topbar__h1" data-bind="course.name">—</h1>
+          <p class="topbar__sub" data-bind="course.meta"></p>
+        </div>
+        <div class="topbar__right">
+          <button class="btn btn--ghost" data-action="open-canvas">
+            <i data-lucide="external-link"></i><span>LMS에서 보기</span>
+          </button>
+          <button class="btn btn--ghost" data-action="open-course-folder">
+            <i data-lucide="folder-open"></i><span>폴더 열기</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 요약 KPI -->
+      <section class="kpis kpis--3">
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--teal"><i data-lucide="files"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__label">자료 수</div>
+            <div class="kpi__value" data-bind="course.files_count">—</div>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--blue"><i data-lucide="layers"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__label">주차</div>
+            <div class="kpi__value" data-bind="course.weeks_count">—</div>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--orange"><i data-lucide="megaphone"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__label">공지</div>
+            <div class="kpi__value" data-bind="course.announcements_count">—</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 주차 트리 -->
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">주차별 자료</div>
+          <span class="card__hint">행 클릭 — 탐색기에서 위치 열기</span>
+        </div>
+        <div class="card__body p0" data-bind="weeks.container">
+          <div class="empty">동기화 후 자료가 표시됩니다.</div>
+        </div>
+      </section>
+
+      <!-- 공지사항 -->
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">공지사항</div>
+        </div>
+        <div class="card__body p0">
+          <ul class="feed" data-bind="course.announcements">
+            <li class="feed__item"><div class="feed__body"><div class="feed__sub">공지가 없습니다.</div></div></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 게시판 자료 -->
+      <section class="card" data-bind="course.boards-card" hidden>
+        <div class="card__head">
+          <div>
+            <div class="card__title">게시판 자료</div>
+            <div class="card__sub">교수자가 게시판으로 올린 첨부 파일</div>
+          </div>
+        </div>
+        <div class="card__body p0">
+          <ul class="feed" data-bind="course.boards"></ul>
+        </div>
+      </section>
+
+      <!-- 과제 -->
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">과제</div>
+        </div>
+        <div class="card__body p0">
+          <table class="table">
+            <thead><tr><th>과제</th><th>마감</th><th>남은 시간</th><th>상태</th></tr></thead>
+            <tbody data-bind="course.assignments">
+              <tr><td colspan="4" class="empty-row">과제가 없습니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" hidden>
+      <span class="toast__icon"><i data-lucide="check"></i></span>
+      <div class="toast__body">
+        <div class="toast__title"></div>
+        <div class="toast__sub"></div>
+      </div>
+      <button class="toast__close" data-action="toast-close" aria-label="닫기">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+  </div>
+
+  <script src="/static/shared.js"></script>
+  <script src="/static/course.js"></script>
+</body>
+</html>
